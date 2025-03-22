@@ -4,6 +4,12 @@
     {
         static void Main(string[] args)
         {
+            /* ######################################
+             * ############### PART 2 ###############
+             * ######################################
+            */
+
+
             // get full file path
             string filePath = Directory.GetCurrentDirectory() + "C:\\..\\..\\..\\input.txt";
 
@@ -97,7 +103,7 @@
 
                             // check if the cheat would save at least 100 seconds,
                             // from current position to destination.
-                            if (targetPosIndex - currentPosIndex >= 100)
+                            if (targetPosIndex - (currentPosIndex + 2) >= 100)
                                 totalCheats++;
                         }
 
@@ -106,7 +112,15 @@
             }
 
             // print answer
-            Console.WriteLine("ANSWER: To save atleast 100 picoseconds you need " + totalCheats + " cheats.");
+            Console.WriteLine("PART 1 ANSWER: To save atleast 100 picoseconds you need " + totalCheats + " cheats.");
+
+            /* ######################################
+             * ############### PART 2 ###############
+             * ######################################
+            */
+
+
+
         }
     }
 }

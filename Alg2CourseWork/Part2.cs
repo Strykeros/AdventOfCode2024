@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,9 +30,9 @@ namespace Alg2CourseWorkDay20
             List<(int, int)> startPoint = new List<(int, int)>();
             List<(int, int)> finishPoint = new List<(int, int)>();
 
-            // create arrays that store movements (up, down, left, right)
+            // create array that store movements (up, down, left, right)
             int[][] directions = { [0, +1], [0, -1], [-1, 0], [+1, 0] };
-            // create arrays that store cheat movements (up, down, left, right)
+            // create array that store cheat movements with vertical, horizontal, and step variations
             int[][] directionsWithCheats = { [-20, 0, 1], [-19, -1, 3], [-18, -2, 5], [-17, -3, 7], [-16, -4, 9], [-15, -5, 11], [-14, -6, 13], [-13, -7, 15], 
                                         [-12, -8, 17], [-11, -9, 19], [-10, -10, 21], [-9, -11, 23], [-8, -12, 25], [-7, -13, 27], [-6, -14, 29], [-5, -15, 31], 
                                         [-4, -16, 33], [-3, -17, 35], [-2, -18, 37], [-1, -19, 39], [0, -20, 41], 
@@ -83,44 +84,71 @@ namespace Alg2CourseWorkDay20
                 }
             }
 
-            // create cheat counter
+            // Create cheat counter
             int totalCheats = 0;
 
-            // go through the whole track again 
+            Console.WriteLine("Loop running.....");
+
+            // Loop through each step in the path
             for (int i = 0; i < track.Count; i++)
             {
-                // check directions with cheats
+                var step = track[i];
+                Console.WriteLine($"STARTING STEP {i + 1} OF {track.Count}");
+
+                // Go through each possible direction
                 for (int j = 0; j < directionsWithCheats.Length; j++)
                 {
-                    /* create a new x and y position with cheats.
-                                                      X    Y
-                    * Example: if the start point is [10, 12], we add 2 movements up (10+2),
-                    * so the new position is [12, 12].
-                    */
-                    int xMove = track[i].Item1 + directionsWithCheats[j][0];
-                    int yMove = track[i].Item2 + directionsWithCheats[j][1];
+                    var dir = directionsWithCheats[j];
+                    int dirY = dir[0];
 
-                    // check if the new coordinates are not outside of bounds
-                    if (xMove >= 0 && xMove < track.Count && yMove >= 0 && yMove < track.Count)
+                    // Try all time intervals within this direction
+                    for (int k = 0; k < dir[2]; k++)
                     {
-                        // check if the new coordinates are on the track
-                        if (track.Contains((xMove, yMove)))
+                        /* Create a new x and y position by applying a cheat movement.
+                         * The direction is defined by 'dir', which contains:
+                         *    dir[0] = vertical movement (Y-axis)
+                         *    dir[1] = starting horizontal movement (X-axis)
+                         *    dir[2] = number of horizontal variations to test (used in the 'k' loop)
+                         * 
+                         * For each step in the path, we explore variations of horizontal movement (dirX) by increasing it with 'k'.
+                         * 
+                         * Example:
+                         *   Current position = [10, 12] (Y, X)
+                         *   dirY = -2 (move 2 up), dirX = -1 (move 1 left), k = 1 → total dirX = -1 + 1 = 0
+                         *   New position = [10 + (-2), 12 + 0] = [8, 12]
+                         */
+
+                        int dirX = dir[1] + k;
+                        int yMove = step.Item1 + dirY;
+                        int xMove = step.Item2 + dirX;
+
+                        // check if the new coordinates are not outside of bounds
+                        if (xMove >= 0 && xMove < track.Count && yMove >= 0 && yMove < track.Count)
                         {
-                            // get current position index
-                            int currentPosIndex = i;
-                            // get position of index that we want to get to (destination)
-                            int targetPosIndex = track.IndexOf((xMove, yMove));
 
-                            // check if the cheat would save at least 100 seconds,
-                            // from current position to destination.
-                            if (targetPosIndex - (currentPosIndex + 2) >= 100)
-                                totalCheats++;
+                            // Check if new position exists in path
+                            if (track.Contains((yMove, xMove)))
+                            {
+                                // get current position index
+                                int index0 = track.IndexOf(step);
+                                // get position of index that we want to get to (destination)
+                                int index1 = track.IndexOf((yMove, xMove));
+
+                                // If the index difference minus the movement cost is >= 100, it's a cheat
+
+                                // check if the cheat would save at least 100 seconds,
+                                // from current position to destination.
+                                if (index1 - (index0 + Math.Abs(dirX) + Math.Abs(dirY)) >= 100)
+                                {
+                                    totalCheats++;
+                                }
+                            }
                         }
-
                     }
                 }
             }
 
+            Console.WriteLine("PART 2 ANSWER: " + totalCheats);
         }
 
     }

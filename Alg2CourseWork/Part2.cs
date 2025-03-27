@@ -93,12 +93,12 @@ namespace Alg2CourseWorkDay20
             for (int i = 0; i < track.Count; i++)
             {
                 var step = track[i];
-                Console.WriteLine($"STARTING STEP {i + 1} OF {track.Count}");
+                //Console.WriteLine($"STARTING STEP {i + 1} OF {track.Count}");
 
                 // Go through each possible direction
                 for (int j = 0; j < directionsWithCheats.Length; j++)
                 {
-                    var dir = directionsWithCheats[j];
+                    int[] dir = directionsWithCheats[j];
                     int dirY = dir[0];
 
                     // Try all time intervals within this direction
